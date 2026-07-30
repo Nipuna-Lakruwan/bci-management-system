@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../../features/auth/controller/auth_controller.dart';
 import '../students/student_list_screen.dart';
 import '../academics/academics_screen.dart';
 import '../hr/employee_list_screen.dart';
@@ -10,9 +12,7 @@ import '../../models/employee.dart';
 import '../../models/course_module.dart';
 
 class DashboardScreen extends StatelessWidget {
-  final String role; // 'Admin', 'HR', or 'Lecturer'
-  
-  const DashboardScreen({super.key, this.role = 'Admin'});
+  const DashboardScreen({super.key});
 
   double get _monthlyPayrollTotal {
     double total = 0;
@@ -24,9 +24,21 @@ class DashboardScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final role = context.watch<AuthController>().currentUser?.role ?? 'Admin';
+    final name = context.watch<AuthController>().currentUser?.name ?? 'User';
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('BCI Dashboard'),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.logout),
+            onPressed: () {
+              context.read<AuthController>().logout();
+              Navigator.pushReplacementNamed(context, '/login');
+            },
+          ),
+        ],
       ),
       drawer: Drawer(
         child: ListView(
@@ -40,8 +52,8 @@ class DashboardScreen extends StatelessWidget {
                 children: [
                   const Icon(Icons.account_circle, size: 60, color: Colors.white),
                   const SizedBox(height: 10),
-                  Text(role, style: const TextStyle(color: Colors.white, fontSize: 18)),
-                  const Text('BCI Management System', style: TextStyle(color: Colors.white70, fontSize: 14)),
+                  Text(name, style: const TextStyle(color: Colors.white, fontSize: 18)),
+                  Text(role, style: const TextStyle(color: Colors.white70, fontSize: 14)),
                 ],
               ),
             ),

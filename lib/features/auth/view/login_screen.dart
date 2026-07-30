@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
-import '../dashboard/dashboard_screen.dart';
+import 'package:provider/provider.dart';
+import '../../../app/router.dart';
+import '../../../core/widgets/app_button.dart';
+import '../controller/auth_controller.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -11,10 +14,10 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-  bool _isLoading = false;
 
   void _handleLogin() async {
-    // 1. Mock Login Validation
+    final authController = context.read<AuthController>();
+
     if (_usernameController.text.trim().isEmpty || _passwordController.text.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Please enter both username and password')),
@@ -22,30 +25,23 @@ class _LoginScreenState extends State<LoginScreen> {
       return;
     }
 
-    setState(() => _isLoading = true);
-
-    // Simulate network delay for learning purposes
-    await Future.delayed(const Duration(seconds: 1));
-
-    setState(() => _isLoading = false);
-
-    // Mock successful authentication
-    if (!mounted) return;
-    
-    // Simple mock role determination based on username
-    String role = 'Admin';
-    String input = _usernameController.text.toLowerCase();
-    if (input.contains('hr')) {
-      role = 'HR';
-    } else if (input.contains('lecturer') || input.contains('prof')) {
-      role = 'Lecturer';
-    }
-
-    // Navigate to Dashboard and replace login screen so user can't hit "back" to go to login
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(builder: (context) => DashboardScreen(role: role)),
+    final success = await authController.login(
+      _usernameController.text.trim(),
+      _passwordController.text,
     );
+
+    if (!mounted) return;
+
+    if (success) {
+      Navigator.pushReplacementNamed(context, AppRouter.dashboardRoute);
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(authController.errorMessage ?? 'Login failed'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
   }
 
   @override
@@ -99,15 +95,14 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                     ),
                     const SizedBox(height: 32),
-                    SizedBox(
-                      width: double.infinity,
-                      height: 50,
-                      child: ElevatedButton(
-                        onPressed: _isLoading ? null : _handleLogin,
-                        child: _isLoading 
-                          ? const CircularProgressIndicator()
-                          : const Text('Login', style: TextStyle(fontSize: 16)),
-                      ),
+                    Consumer<AuthController>(
+                      builder: (context, authController, child) {
+                        return AppButton(
+                          label: 'Login',
+                          onPressed: _handleLogin,
+                          isLoading: authController.isLoading,
+                        );
+                      },
                     ),
                   ],
                 ),
