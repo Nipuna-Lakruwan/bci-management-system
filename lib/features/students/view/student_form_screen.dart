@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
-import '../../models/student.dart';
-import '../../core/storage_service.dart';
+import 'package:provider/provider.dart';
+import '../model/student.dart';
+import '../controller/student_controller.dart';
+import '../../../core/widgets/app_button.dart';
 
 class StudentFormScreen extends StatefulWidget {
   final Student? student;
@@ -42,27 +44,28 @@ class _StudentFormScreenState extends State<StudentFormScreen> {
     super.dispose();
   }
 
-  void _saveStudent() {
+  void _saveStudent() async {
     if (_formKey.currentState!.validate()) {
       final newStudent = Student(
-        id: _idController.text,
-        name: _nameController.text,
-        email: _emailController.text,
-        program: _programmeController.text,
-        intake: _intakeController.text,
+        id: _idController.text.trim(),
+        name: _nameController.text.trim(),
+        email: _emailController.text.trim(),
+        program: _programmeController.text.trim(),
+        intake: _intakeController.text.trim(),
         status: _status,
       );
 
+      final controller = context.read<StudentController>();
+
       if (widget.student == null) {
-        mockStudents.add(newStudent);
+        await controller.addStudent(newStudent);
       } else {
-        final index = mockStudents.indexWhere((s) => s.id == widget.student!.id);
-        if (index != -1) {
-          mockStudents[index] = newStudent;
-        }
+        await controller.updateStudent(newStudent);
       }
-      StorageService.saveStudents();
-      Navigator.pop(context, true);
+
+      if (mounted) {
+        Navigator.pop(context);
+      }
     }
   }
 
@@ -80,43 +83,44 @@ class _StudentFormScreenState extends State<StudentFormScreen> {
             children: [
               TextFormField(
                 controller: _idController,
-                decoration: const InputDecoration(labelText: 'Student ID', border: OutlineInputBorder()),
+                decoration: const InputDecoration(labelText: 'Student ID'),
                 validator: (value) => value == null || value.isEmpty ? 'Required' : null,
                 enabled: !isEditing,
               ),
               const SizedBox(height: 16),
               TextFormField(
                 controller: _nameController,
-                decoration: const InputDecoration(labelText: 'Full Name', border: OutlineInputBorder()),
+                decoration: const InputDecoration(labelText: 'Full Name'),
                 validator: (value) => value == null || value.isEmpty ? 'Required' : null,
               ),
               const SizedBox(height: 16),
               TextFormField(
                 controller: _emailController,
-                decoration: const InputDecoration(labelText: 'Email Address', border: OutlineInputBorder()),
+                decoration: const InputDecoration(labelText: 'Email Address'),
                 validator: (value) => value == null || value.isEmpty ? 'Required' : null,
               ),
               const SizedBox(height: 16),
               TextFormField(
                 controller: _programmeController,
-                decoration: const InputDecoration(labelText: 'Programme', border: OutlineInputBorder()),
+                decoration: const InputDecoration(labelText: 'Programme'),
                 validator: (value) => value == null || value.isEmpty ? 'Required' : null,
               ),
               const SizedBox(height: 16),
               DropdownButtonFormField<String>(
                 value: _status,
-                decoration: const InputDecoration(labelText: 'Status', border: OutlineInputBorder()),
+                decoration: const InputDecoration(labelText: 'Status'),
                 items: ['Active', 'Inactive'].map((s) => DropdownMenuItem(value: s, child: Text(s))).toList(),
                 onChanged: (value) => setState(() => _status = value!),
               ),
               const SizedBox(height: 32),
-              SizedBox(
-                width: double.infinity,
-                height: 50,
-                child: ElevatedButton(
-                  onPressed: _saveStudent,
-                  child: const Text('Save Student'),
-                ),
+              Consumer<StudentController>(
+                builder: (context, controller, child) {
+                  return AppButton(
+                    label: 'Save Student',
+                    onPressed: _saveStudent,
+                    isLoading: controller.isLoading,
+                  );
+                },
               ),
             ],
           ),

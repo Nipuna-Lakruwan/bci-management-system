@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../features/auth/controller/auth_controller.dart';
-import '../students/student_list_screen.dart';
+import '../../app/router.dart';
 import '../academics/academics_screen.dart';
 import '../hr/employee_list_screen.dart';
 import '../hr/payroll_screen.dart';
@@ -69,10 +69,7 @@ class DashboardScreen extends StatelessWidget {
               title: const Text('Students'),
               onTap: () {
                 Navigator.pop(context);
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const StudentListScreen()),
-                );
+                Navigator.pushNamed(context, AppRouter.studentListRoute);
               },
             ),
             ListTile(
