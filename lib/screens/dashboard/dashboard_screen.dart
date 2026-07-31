@@ -7,11 +7,11 @@ import '../../features/courses/controller/course_controller.dart';
 import '../../features/enrolment/controller/enrolment_controller.dart';
 import '../../features/employees/controller/employee_controller.dart';
 import '../../features/employees/presentation/employee_list_screen.dart';
+import '../../features/hr/presentation/leave_management_screen.dart';
+import '../../features/hr/presentation/employee_attendance_screen.dart';
 import '../../app/router.dart';
 import '../../app/theme.dart';
 import '../hr/payroll_screen.dart';
-import '../hr/leave_management_screen.dart';
-import '../hr/employee_attendance_screen.dart';
 
 class DashboardScreen extends StatelessWidget {
   const DashboardScreen({super.key});
