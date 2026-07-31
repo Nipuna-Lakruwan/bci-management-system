@@ -4,12 +4,13 @@ import '../../features/auth/controller/auth_controller.dart';
 import '../../features/students/controller/student_controller.dart';
 import '../../features/courses/controller/course_controller.dart';
 import '../../features/enrolment/controller/enrolment_controller.dart';
+import '../../features/employees/controller/employee_controller.dart';
+import '../../features/employees/presentation/employee_list_screen.dart';
 import '../../app/router.dart';
-import '../hr/employee_list_screen.dart';
+import '../../app/theme.dart';
 import '../hr/payroll_screen.dart';
 import '../hr/leave_management_screen.dart';
 import '../hr/employee_attendance_screen.dart';
-import '../../models/employee.dart';
 
 class DashboardScreen extends StatelessWidget {
   const DashboardScreen({super.key});
@@ -165,15 +166,17 @@ class DashboardScreen extends StatelessWidget {
                     ),
                   ),
                   if (role == 'Admin' || role == 'HR') ...[
-                    _buildSummaryCard(
-                      context,
-                      'Total Staff',
-                      mockEmployees.length.toString(),
-                      Icons.work,
-                      Colors.purple,
-                      null,
-                    ),
-                  ]
+                      Consumer<EmployeeController>(
+                        builder: (context, controller, _) => _buildGradientCard(
+                          context,
+                          'Active Staff',
+                          controller.employees.length.toString(),
+                          Icons.work_rounded,
+                          const [Color(0xFF8B5CF6), Color(0xFF6D28D9)],
+                          null,
+                        ),
+                      ),
+                    ]
                 ],
               ),
             ),
