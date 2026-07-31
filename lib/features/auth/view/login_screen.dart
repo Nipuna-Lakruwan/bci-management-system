@@ -67,7 +67,10 @@ class _LoginScreenState extends State<LoginScreen> {
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    const Icon(Icons.school, size: 80, color: Color(0xFF1E3A8A)),
+                    Image.asset(
+                      'assets/images/bci-logo.png',
+                      height: 80,
+                    ),
                     const SizedBox(height: 16),
                     const Text(
                       'BCI Portal',
