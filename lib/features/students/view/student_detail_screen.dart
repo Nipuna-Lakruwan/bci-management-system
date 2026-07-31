@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../controller/student_controller.dart';
+import '../../enrolment/view/student_courses_screen.dart';
 import '../../../core/widgets/app_card.dart';
 
 class StudentDetailScreen extends StatelessWidget {
@@ -95,7 +96,10 @@ class StudentDetailScreen extends StatelessWidget {
                 const SizedBox(height: 24),
                 ElevatedButton.icon(
                   onPressed: () {
-                    // TODO: Navigate to Enrolled Courses view (Phase 5)
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => StudentCoursesScreen(student: student)),
+                    );
                   },
                   icon: const Icon(Icons.book),
                   label: const Text('View Enrolled Courses'),
