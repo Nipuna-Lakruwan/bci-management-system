@@ -10,6 +10,9 @@
 - Role-based dashboard
 - Data persistence (offline-first)
 
+## Screenshots
+*(Add screenshots here after running the app)*
+
 ## Architecture
 This project follows a clean MVC (Model-View-Controller) architecture using the Provider pattern for state management. 
 

@@ -1,26 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../features/auth/controller/auth_controller.dart';
+import '../../features/students/controller/student_controller.dart';
+import '../../features/courses/controller/course_controller.dart';
+import '../../features/enrolment/controller/enrolment_controller.dart';
 import '../../app/router.dart';
-import '../academics/academics_screen.dart';
 import '../hr/employee_list_screen.dart';
 import '../hr/payroll_screen.dart';
 import '../hr/leave_management_screen.dart';
 import '../hr/employee_attendance_screen.dart';
-import '../../models/student.dart';
 import '../../models/employee.dart';
-import '../../models/course_module.dart';
 
 class DashboardScreen extends StatelessWidget {
   const DashboardScreen({super.key});
-
-  double get _monthlyPayrollTotal {
-    double total = 0;
-    for (final emp in mockEmployees) {
-      total += emp.netSalary;
-    }
-    return total;
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -119,7 +111,8 @@ class DashboardScreen extends StatelessWidget {
               leading: const Icon(Icons.logout, color: Colors.red),
               title: const Text('Logout', style: TextStyle(color: Colors.red)),
               onTap: () {
-                Navigator.pushReplacementNamed(context, '/'); 
+                context.read<AuthController>().logout();
+                Navigator.pushReplacementNamed(context, '/login'); 
               },
             ),
           ],
@@ -127,37 +120,98 @@ class DashboardScreen extends StatelessWidget {
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: GridView.count(
-          crossAxisCount: MediaQuery.of(context).size.width > 600 ? 4 : 2,
-          crossAxisSpacing: 16,
-          mainAxisSpacing: 16,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _buildDashboardCard(context, 'Total Students', mockStudents.length.toString(), Icons.people, Colors.blue),
-            _buildDashboardCard(context, 'Active Staff', mockEmployees.length.toString(), Icons.badge, Colors.green),
-            _buildDashboardCard(context, 'Programmes', mockModules.length.toString(), Icons.menu_book, Colors.orange),
-            _buildDashboardCard(context, 'Monthly Payroll', 'Rs ${_monthlyPayrollTotal / 1000}k', Icons.attach_money, Colors.red),
+            const Text(
+              'Overview',
+              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 16),
+            Expanded(
+              child: GridView.count(
+                crossAxisCount: MediaQuery.of(context).size.width > 600 ? 4 : 2,
+                crossAxisSpacing: 16,
+                mainAxisSpacing: 16,
+                children: [
+                  Consumer<StudentController>(
+                    builder: (context, controller, _) => _buildSummaryCard(
+                      context,
+                      'Total Students',
+                      controller.students.length.toString(),
+                      Icons.people,
+                      Colors.blue,
+                      AppRouter.studentListRoute,
+                    ),
+                  ),
+                  Consumer<CourseController>(
+                    builder: (context, controller, _) => _buildSummaryCard(
+                      context,
+                      'Total Courses',
+                      controller.courses.length.toString(),
+                      Icons.book,
+                      Colors.orange,
+                      AppRouter.courseListRoute,
+                    ),
+                  ),
+                  Consumer<EnrolmentController>(
+                    builder: (context, controller, _) => _buildSummaryCard(
+                      context,
+                      'Total Enrolments',
+                      controller.enrolments.length.toString(),
+                      Icons.how_to_reg,
+                      Colors.green,
+                      null,
+                    ),
+                  ),
+                  if (role == 'Admin' || role == 'HR') ...[
+                    _buildSummaryCard(
+                      context,
+                      'Total Staff',
+                      mockEmployees.length.toString(),
+                      Icons.work,
+                      Colors.purple,
+                      null,
+                    ),
+                  ]
+                ],
+              ),
+            ),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildDashboardCard(BuildContext context, String title, String value, IconData icon, Color color) {
-    return Card(
-      elevation: 4,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: FittedBox(
-          fit: BoxFit.scaleDown,
+  Widget _buildSummaryCard(
+    BuildContext context,
+    String title,
+    String count,
+    IconData icon,
+    Color color,
+    String? route,
+  ) {
+    return InkWell(
+      onTap: route != null ? () => Navigator.pushNamed(context, route) : null,
+      child: Card(
+        elevation: 4,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Icon(icon, size: 48, color: color),
-              const SizedBox(height: 16),
-              Text(title, style: const TextStyle(fontSize: 16, color: Colors.grey)),
               const SizedBox(height: 8),
-              Text(value, style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+              Text(
+                count,
+                style: const TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
+              ),
+              Text(
+                title,
+                textAlign: TextAlign.center,
+                style: const TextStyle(fontSize: 14, color: Colors.grey),
+              ),
             ],
           ),
         ),
