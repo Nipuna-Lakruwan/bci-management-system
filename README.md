@@ -1,5 +1,9 @@
 # BCI Integrated Management System
 
+<div align="center">
+  <img src="assets/images/bci-logo.png" alt="BCI Logo" width="200" />
+</div>
+
 > A professional Flutter mobile application for managing students, courses,
 > and enrolment — built with MVC architecture and clean engineering practices.
 
