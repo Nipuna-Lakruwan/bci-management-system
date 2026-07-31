@@ -77,7 +77,6 @@ class _EmployeeAttendanceScreenState extends State<EmployeeAttendanceScreen> {
                   trailing: Switch(
                     value: record.isPresent,
                     activeTrackColor: Colors.green.shade200,
-                    activeColor: Colors.green,
                     onChanged: (bool value) {
                       setState(() {
                         record.isPresent = value;

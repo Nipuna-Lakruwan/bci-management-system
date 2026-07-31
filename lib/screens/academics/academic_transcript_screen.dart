@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../models/student.dart';
+import '../../features/students/model/student.dart';
 import '../../models/grade_record.dart';
 
 class AcademicTranscriptScreen extends StatelessWidget {
