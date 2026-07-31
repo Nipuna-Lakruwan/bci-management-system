@@ -3,6 +3,8 @@ import 'package:provider/provider.dart';
 import '../features/auth/controller/auth_controller.dart';
 import '../features/students/controller/student_controller.dart';
 import '../features/students/repository/local_student_repository.dart';
+import '../features/courses/controller/course_controller.dart';
+import '../features/courses/repository/local_course_repository.dart';
 import 'router.dart';
 import 'theme.dart';
 
@@ -15,6 +17,7 @@ class App extends StatelessWidget {
       providers: [
         ChangeNotifierProvider(create: (_) => AuthController()),
         ChangeNotifierProvider(create: (_) => StudentController(LocalStudentRepository())),
+        ChangeNotifierProvider(create: (_) => CourseController(LocalCourseRepository())),
       ],
       child: MaterialApp(
         title: 'BCI Management System',

@@ -74,13 +74,10 @@ class DashboardScreen extends StatelessWidget {
             ),
             ListTile(
               leading: const Icon(Icons.book),
-              title: const Text('Academics'),
+              title: const Text('Courses'),
               onTap: () {
                 Navigator.pop(context);
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const AcademicsScreen()),
-                );
+                Navigator.pushNamed(context, AppRouter.courseListRoute);
               },
             ),
             if (role == 'Admin' || role == 'HR') ...[

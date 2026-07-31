@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import '../screens/dashboard/dashboard_screen.dart';
 import '../features/auth/view/login_screen.dart';
 import '../features/students/view/student_list_screen.dart';
-import '../features/students/view/student_list_screen.dart';
+import '../features/courses/view/course_list_screen.dart';
 // import '../features/courses/view/course_list_screen.dart';
 
 class AppRouter {
@@ -22,8 +22,8 @@ class AppRouter {
         return MaterialPageRoute(builder: (_) => const DashboardScreen());
       case studentListRoute:
         return MaterialPageRoute(builder: (_) => const StudentListScreen());
-      // case courseListRoute:
-      //   return MaterialPageRoute(builder: (_) => const CourseListScreen());
+      case courseListRoute:
+        return MaterialPageRoute(builder: (_) => const CourseListScreen());
       default:
         return MaterialPageRoute(
           builder: (_) => Scaffold(
