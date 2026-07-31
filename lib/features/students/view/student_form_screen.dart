@@ -107,7 +107,7 @@ class _StudentFormScreenState extends State<StudentFormScreen> {
               ),
               const SizedBox(height: 16),
               DropdownButtonFormField<String>(
-                value: _status,
+                initialValue: _status,
                 decoration: const InputDecoration(labelText: 'Status'),
                 items: ['Active', 'Inactive'].map((s) => DropdownMenuItem(value: s, child: Text(s))).toList(),
                 onChanged: (value) => setState(() => _status = value!),

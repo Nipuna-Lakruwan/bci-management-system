@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import '../../models/course_module.dart';
-import '../../models/student.dart';
+import '../../features/courses/model/course.dart';
+import '../../features/students/model/student.dart';
 import '../../models/attendance_record.dart';
 
 class AttendanceMarkingScreen extends StatefulWidget {
-  final CourseModule module;
+  final Course module;
 
   const AttendanceMarkingScreen({super.key, required this.module});
 
@@ -33,7 +33,7 @@ class _AttendanceMarkingScreenState extends State<AttendanceMarkingScreen> {
   Widget build(BuildContext context) {
     final String dateString = "${_selectedDate.year}-${_selectedDate.month.toString().padLeft(2, '0')}-${_selectedDate.day.toString().padLeft(2, '0')}";
     // For simplicity in MVP, we show all active students in every module.
-    final List<Student> activeStudents = mockStudents.where((s) => s.status == 'Active').toList();
+    final List<Student> activeStudents = []; // No mock students for now
 
     return Scaffold(
       appBar: AppBar(
@@ -81,7 +81,6 @@ class _AttendanceMarkingScreenState extends State<AttendanceMarkingScreen> {
                   trailing: Switch(
                     value: record.isPresent,
                     activeTrackColor: Colors.green.shade200,
-                    activeColor: Colors.green, // Leaving as is, or removing it if deprecated. Wait, activeThumbColor is the replacement for activeColor but it's not deprecated in all flutter versions. Let's just remove activeColor and use activeTrackColor
                     onChanged: (bool value) {
                       setState(() {
                         record.isPresent = value;

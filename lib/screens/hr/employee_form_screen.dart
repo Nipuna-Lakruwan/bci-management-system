@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../models/employee.dart';
-import '../../core/storage_service.dart';
+import '../../core/storage/storage_service.dart';
 
 class EmployeeFormScreen extends StatefulWidget {
   final Employee? employee;
@@ -112,7 +112,7 @@ class _EmployeeFormScreenState extends State<EmployeeFormScreen> {
               const Text('Job Details', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
               const SizedBox(height: 16),
               DropdownButtonFormField<String>(
-                value: _department,
+                initialValue: _department,
                 decoration: const InputDecoration(labelText: 'Department', border: OutlineInputBorder()),
                 items: _departments.map((d) => DropdownMenuItem(value: d, child: Text(d))).toList(),
                 onChanged: (value) => setState(() => _department = value!),

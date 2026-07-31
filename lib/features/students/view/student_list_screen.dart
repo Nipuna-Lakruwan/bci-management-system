@@ -46,17 +46,7 @@ class _StudentListScreenState extends State<StudentListScreen> {
     );
   }
 
-  void _confirmDelete(String id) async {
-    final confirmed = await ConfirmDialog.show(
-      context,
-      title: 'Delete Student',
-      content: 'Are you sure you want to delete this student?',
-    );
 
-    if (confirmed == true && mounted) {
-      context.read<StudentController>().deleteStudent(id);
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
