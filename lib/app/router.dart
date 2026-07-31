@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 
 // Import screens (will update these imports as features are built)
-import '../screens/auth/login_screen.dart';
 import '../screens/dashboard/dashboard_screen.dart';
-// import '../features/students/view/student_list_screen.dart';
+import '../features/auth/view/login_screen.dart';
+import '../features/students/view/student_list_screen.dart';
+import '../features/students/view/student_list_screen.dart';
 // import '../features/courses/view/course_list_screen.dart';
 
 class AppRouter {
@@ -19,8 +20,8 @@ class AppRouter {
         return MaterialPageRoute(builder: (_) => const LoginScreen());
       case dashboardRoute:
         return MaterialPageRoute(builder: (_) => const DashboardScreen());
-      // case studentListRoute:
-      //   return MaterialPageRoute(builder: (_) => const StudentListScreen());
+      case studentListRoute:
+        return MaterialPageRoute(builder: (_) => const StudentListScreen());
       // case courseListRoute:
       //   return MaterialPageRoute(builder: (_) => const CourseListScreen());
       default:

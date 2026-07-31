@@ -56,11 +56,3 @@ class Student {
     );
   }
 }
-
-// Global mock list for our simple screens to use
-List<Student> mockStudents = [
-  const Student(id: 'STU001', name: 'Nipuna Lakruwan', email: 'nipuna@bci.edu', program: 'BSc Computer Science', intake: '2024', status: 'Active'),
-  const Student(id: 'STU002', name: 'Sarah Perera', email: 'sarah@bci.edu', program: 'BBA Business Admin', intake: '2024', status: 'Active'),
-  const Student(id: 'STU003', name: 'Kamal Silva', email: 'kamal@bci.edu', program: 'BSc Software Eng', intake: '2023', status: 'Inactive'),
-  const Student(id: 'STU004', name: 'Amal Fernando', email: 'amal@bci.edu', program: 'BSc Computer Science', intake: '2024', status: 'Active'),
-];
