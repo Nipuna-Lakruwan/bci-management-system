@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'dart:ui';
 import '../controller/auth_controller.dart';
 import '../../../app/router.dart';
 import '../../../app/theme.dart';
@@ -57,11 +56,11 @@ class _LoginScreenState extends State<LoginScreen> {
                           Container(
                             padding: const EdgeInsets.all(32),
                             decoration: BoxDecoration(
-                              color: Colors.white.withOpacity(0.1),
+                              color: Colors.white.withValues(alpha: 0.1),
                               shape: BoxShape.circle,
                               boxShadow: [
                                 BoxShadow(
-                                  color: Colors.black.withOpacity(0.1),
+                                  color: Colors.black.withValues(alpha: 0.1),
                                   blurRadius: 32,
                                 )
                               ],
@@ -87,7 +86,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             'Empowering Education through Technology.',
                             style: GoogleFonts.inter(
                               fontSize: 18,
-                              color: Colors.white.withOpacity(0.8),
+                              color: Colors.white.withValues(alpha: 0.8),
                             ),
                           ),
                         ],
@@ -193,7 +192,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           onExit: (_) => setState(() => _isHovering = false),
                           child: AnimatedContainer(
                             duration: const Duration(milliseconds: 200),
-                            transform: Matrix4.identity()..scale(_isHovering ? 1.02 : 1.0),
+                            transform: _isHovering ? Matrix4.diagonal3Values(1.02, 1.02, 1.0) : Matrix4.identity(),
                             child: ElevatedButton(
                               onPressed: isLoading ? null : _handleLogin,
                               child: isLoading

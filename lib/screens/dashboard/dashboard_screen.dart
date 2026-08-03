@@ -136,14 +136,14 @@ class DashboardScreen extends StatelessWidget {
                   Container(
                     padding: const EdgeInsets.all(2),
                     decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.2),
+                      color: Colors.white.withValues(alpha: 0.2),
                       shape: BoxShape.circle,
                     ),
                     child: const Icon(Icons.account_circle, size: 64, color: Colors.white),
                   ),
                   const SizedBox(height: 12),
                   Text(name, style: GoogleFonts.outfit(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold)),
-                  Text(role, style: GoogleFonts.inter(color: Colors.white.withOpacity(0.8), fontSize: 14)),
+                  Text(role, style: GoogleFonts.inter(color: Colors.white.withValues(alpha: 0.8), fontSize: 14)),
                 ],
               ),
             ),
@@ -171,7 +171,7 @@ class DashboardScreen extends StatelessWidget {
               contentPadding: const EdgeInsets.symmetric(horizontal: 24),
               leading: Container(
                 padding: const EdgeInsets.all(8),
-                decoration: BoxDecoration(color: Colors.red.withOpacity(0.1), borderRadius: BorderRadius.circular(8)),
+                decoration: BoxDecoration(color: Colors.red.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(8)),
                 child: const Icon(Icons.logout_rounded, color: Colors.red),
               ),
               title: Text('Logout', style: GoogleFonts.inter(color: Colors.red, fontWeight: FontWeight.w600)),
@@ -192,7 +192,7 @@ class DashboardScreen extends StatelessWidget {
       contentPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 4),
       leading: Icon(icon, color: AppTheme.textSecondary),
       title: Text(title, style: GoogleFonts.inter(color: AppTheme.textPrimary, fontWeight: FontWeight.w500)),
-      hoverColor: AppTheme.primaryLight.withOpacity(0.05),
+      hoverColor: AppTheme.primaryLight.withValues(alpha: 0.05),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
       onTap: () {
         Navigator.pop(context); // Close drawer
@@ -225,7 +225,7 @@ class DashboardScreen extends StatelessWidget {
           ),
           boxShadow: [
             BoxShadow(
-              color: gradientColors.last.withOpacity(0.3),
+              color: gradientColors.last.withValues(alpha: 0.3),
               blurRadius: 16,
               offset: const Offset(0, 8),
             )
@@ -240,7 +240,7 @@ class DashboardScreen extends StatelessWidget {
               child: Icon(
                 icon,
                 size: 100,
-                color: Colors.white.withOpacity(0.15),
+                color: Colors.white.withValues(alpha: 0.15),
               ),
             ),
             Padding(
@@ -255,7 +255,7 @@ class DashboardScreen extends StatelessWidget {
                       Container(
                         padding: const EdgeInsets.all(12),
                         decoration: BoxDecoration(
-                          color: Colors.white.withOpacity(0.2),
+                          color: Colors.white.withValues(alpha: 0.2),
                           borderRadius: BorderRadius.circular(12),
                         ),
                         child: Icon(icon, size: 32, color: Colors.white),
@@ -282,7 +282,7 @@ class DashboardScreen extends StatelessWidget {
                         style: GoogleFonts.inter(
                           fontSize: 16,
                           fontWeight: FontWeight.w500,
-                          color: Colors.white.withOpacity(0.9),
+                          color: Colors.white.withValues(alpha: 0.9),
                         ),
                       ),
                     ],
@@ -321,7 +321,7 @@ class _DashboardHoverCardState extends State<DashboardHoverCard> {
         onTap: widget.route != null ? () => Navigator.pushNamed(context, widget.route!) : null,
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 200),
-          transform: Matrix4.identity()..scale(_isHovering ? 1.03 : 1.0),
+          transform: _isHovering ? Matrix4.diagonal3Values(1.03, 1.03, 1.0) : Matrix4.identity(),
           child: widget.child,
         ),
       ),

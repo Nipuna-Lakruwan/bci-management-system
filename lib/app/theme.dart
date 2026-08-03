@@ -25,8 +25,7 @@ class AppTheme {
       colorScheme: ColorScheme.fromSeed(
         seedColor: primaryBlue,
         secondary: accentAmber,
-        surface: surfaceColor,
-        background: backgroundColor,
+        surface: backgroundColor,
       ),
       // Premium Typography Mix (Outfit for headers, Inter for body)
       textTheme: GoogleFonts.interTextTheme().apply(
@@ -58,7 +57,7 @@ class AppTheme {
           backgroundColor: primaryBlue,
           foregroundColor: Colors.white,
           elevation: 4,
-          shadowColor: primaryLight.withOpacity(0.5),
+          shadowColor: primaryLight.withValues(alpha: 0.5),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12), // Smoother edges
           ),
@@ -87,7 +86,7 @@ class AppTheme {
       ),
       cardTheme: CardThemeData(
         elevation: 8,
-        shadowColor: Colors.black.withOpacity(0.05),
+        shadowColor: Colors.black.withValues(alpha: 0.05),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(20),
         ),
