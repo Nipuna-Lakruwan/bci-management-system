@@ -12,6 +12,7 @@ import '../../features/hr/presentation/employee_attendance_screen.dart';
 import '../../app/router.dart';
 import '../../app/theme.dart';
 import '../hr/payroll_screen.dart';
+import '../../core/policy/access_control_policy.dart';
 
 class DashboardScreen extends StatelessWidget {
   const DashboardScreen({super.key});
@@ -20,6 +21,7 @@ class DashboardScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final role = context.watch<AuthController>().currentUser?.role ?? 'Admin';
     final name = context.watch<AuthController>().currentUser?.name ?? 'User';
+    final policy = AccessControlFactory.getPolicy(role);
 
     return Scaffold(
       appBar: AppBar(
@@ -95,7 +97,7 @@ class DashboardScreen extends StatelessWidget {
                         AppRouter.enrolmentRoute,
                       ),
                     ),
-                    if (role == 'Admin' || role == 'HR') ...[
+                    if (policy.canViewHumanResources) ...[
                       Consumer<EmployeeController>(
                         builder: (context, controller, _) => _buildGradientCard(
                           context,
@@ -118,6 +120,7 @@ class DashboardScreen extends StatelessWidget {
   }
 
   Widget _buildPremiumDrawer(BuildContext context, String name, String role) {
+    final policy = AccessControlFactory.getPolicy(role);
     return Drawer(
       elevation: 16,
       child: Container(
@@ -152,7 +155,7 @@ class DashboardScreen extends StatelessWidget {
             _buildDrawerItem(context, Icons.people_alt_rounded, 'Students', AppRouter.studentListRoute),
             _buildDrawerItem(context, Icons.menu_book_rounded, 'Courses', AppRouter.courseListRoute),
             _buildDrawerItem(context, Icons.how_to_reg_rounded, 'Enrolments', AppRouter.enrolmentRoute),
-            if (role == 'Admin' || role == 'HR') ...[
+            if (policy.canViewHumanResources) ...[
               const Padding(
                 padding: EdgeInsets.symmetric(horizontal: 24, vertical: 16),
                 child: Text('HUMAN RESOURCES', style: TextStyle(color: Colors.grey, fontSize: 12, fontWeight: FontWeight.bold, letterSpacing: 1.2)),
