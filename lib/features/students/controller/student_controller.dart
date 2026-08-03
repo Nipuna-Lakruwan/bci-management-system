@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import '../model/student.dart';
-import '../repository/student_repository.dart';
+import '../service/student_service.dart';
 
 class StudentController extends ChangeNotifier {
-  final StudentRepository _repository;
+  final StudentService _service;
   
-  StudentController(this._repository) {
+  StudentController(this._service) {
     loadStudents();
   }
 
@@ -19,7 +19,7 @@ class StudentController extends ChangeNotifier {
 
   Future<void> loadStudents() async {
     _setLoading(true);
-    _students = await _repository.getStudents();
+    _students = await _service.getAllStudents();
     _applyFilter();
     _setLoading(false);
   }
@@ -44,19 +44,19 @@ class StudentController extends ChangeNotifier {
 
   Future<void> addStudent(Student student) async {
     _setLoading(true);
-    await _repository.addStudent(student);
+    await _service.registerStudent(student);
     await loadStudents();
   }
 
   Future<void> updateStudent(Student student) async {
     _setLoading(true);
-    await _repository.updateStudent(student);
+    await _service.updateStudentDetails(student);
     await loadStudents();
   }
 
   Future<void> deleteStudent(String id) async {
     _setLoading(true);
-    await _repository.deleteStudent(id);
+    await _service.removeStudent(id);
     await loadStudents();
   }
 

@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import '../model/course.dart';
-import '../repository/course_repository.dart';
+import '../service/course_service.dart';
 
 class CourseController extends ChangeNotifier {
-  final CourseRepository _repository;
+  final CourseService _service;
   
-  CourseController(this._repository) {
+  CourseController(this._service) {
     loadCourses();
   }
 
@@ -17,25 +17,25 @@ class CourseController extends ChangeNotifier {
 
   Future<void> loadCourses() async {
     _setLoading(true);
-    _courses = await _repository.getCourses();
+    _courses = await _service.getAllCourses();
     _setLoading(false);
   }
 
   Future<void> addCourse(Course course) async {
     _setLoading(true);
-    await _repository.addCourse(course);
+    await _service.addCourse(course);
     await loadCourses();
   }
 
   Future<void> updateCourse(Course course) async {
     _setLoading(true);
-    await _repository.updateCourse(course);
+    await _service.updateCourse(course);
     await loadCourses();
   }
 
   Future<void> deleteCourse(String id) async {
     _setLoading(true);
-    await _repository.deleteCourse(id);
+    await _service.removeCourse(id);
     await loadCourses();
   }
 

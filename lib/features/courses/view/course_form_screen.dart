@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import '../model/course.dart';
 import '../controller/course_controller.dart';
 import '../../../core/widgets/app_button.dart';
+import '../validator/course_validator.dart';
 
 class CourseFormScreen extends StatefulWidget {
   final Course? course;
@@ -15,6 +16,7 @@ class CourseFormScreen extends StatefulWidget {
 
 class _CourseFormScreenState extends State<CourseFormScreen> {
   final _formKey = GlobalKey<FormState>();
+  final _validator = CourseValidator();
   
   late TextEditingController _idController;
   late TextEditingController _nameController;
@@ -77,25 +79,21 @@ class _CourseFormScreenState extends State<CourseFormScreen> {
               TextFormField(
                 controller: _idController,
                 decoration: const InputDecoration(labelText: 'Course ID'),
-                validator: (value) => value == null || value.isEmpty ? 'Required' : null,
+                validator: _validator.validateId,
                 enabled: !isEditing,
               ),
               const SizedBox(height: 16),
               TextFormField(
                 controller: _nameController,
                 decoration: const InputDecoration(labelText: 'Course Name'),
-                validator: (value) => value == null || value.isEmpty ? 'Required' : null,
+                validator: _validator.validateName,
               ),
               const SizedBox(height: 16),
               TextFormField(
                 controller: _creditsController,
-                decoration: const InputDecoration(labelText: 'Credits'),
+                decoration: const InputDecoration(labelText: 'Fee (LKR)'),
                 keyboardType: TextInputType.number,
-                validator: (value) {
-                  if (value == null || value.isEmpty) return 'Required';
-                  if (int.tryParse(value) == null) return 'Must be a number';
-                  return null;
-                },
+                validator: _validator.validateFee,
               ),
               const SizedBox(height: 16),
               TextFormField(

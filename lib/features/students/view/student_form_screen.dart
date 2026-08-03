@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import '../model/student.dart';
 import '../controller/student_controller.dart';
 import '../../../core/widgets/app_button.dart';
+import '../validator/student_validator.dart';
 
 class StudentFormScreen extends StatefulWidget {
   final Student? student;
@@ -15,6 +16,7 @@ class StudentFormScreen extends StatefulWidget {
 
 class _StudentFormScreenState extends State<StudentFormScreen> {
   final _formKey = GlobalKey<FormState>();
+  final _validator = StudentValidator();
   
   late TextEditingController _idController;
   late TextEditingController _nameController;
@@ -84,26 +86,26 @@ class _StudentFormScreenState extends State<StudentFormScreen> {
               TextFormField(
                 controller: _idController,
                 decoration: const InputDecoration(labelText: 'Student ID'),
-                validator: (value) => value == null || value.isEmpty ? 'Required' : null,
+                validator: _validator.validateId,
                 enabled: !isEditing,
               ),
               const SizedBox(height: 16),
               TextFormField(
                 controller: _nameController,
                 decoration: const InputDecoration(labelText: 'Full Name'),
-                validator: (value) => value == null || value.isEmpty ? 'Required' : null,
+                validator: _validator.validateName,
               ),
               const SizedBox(height: 16),
               TextFormField(
                 controller: _emailController,
                 decoration: const InputDecoration(labelText: 'Email Address'),
-                validator: (value) => value == null || value.isEmpty ? 'Required' : null,
+                validator: _validator.validateEmail,
               ),
               const SizedBox(height: 16),
               TextFormField(
                 controller: _programmeController,
                 decoration: const InputDecoration(labelText: 'Programme'),
-                validator: (value) => value == null || value.isEmpty ? 'Required' : null,
+                validator: _validator.validateProgram,
               ),
               const SizedBox(height: 16),
               DropdownButtonFormField<String>(
