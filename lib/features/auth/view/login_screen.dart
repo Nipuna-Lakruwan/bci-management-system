@@ -14,8 +14,8 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  final _usernameController = TextEditingController();
-  final _passwordController = TextEditingController();
+  final _usernameController = TextEditingController(text: 'admin');
+  final _passwordController = TextEditingController(text: 'admin123');
   bool _isHovering = false;
 
   void _handleLogin() async {

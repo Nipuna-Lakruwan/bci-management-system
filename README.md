@@ -36,6 +36,11 @@ lib/
 2. Fetch dependencies: `flutter pub get`
 3. Run the app: `flutter run`
 
+### 🔑 Demo Credentials (For Assignment Evaluators)
+- **Username:** `admin`
+- **Password:** `admin123`
+*(Note: These are pre-filled in the login screen for your convenience.)*
+
 ## Tech Stack
 Flutter · Dart · Provider (ChangeNotifier) · SharedPreferences
 
