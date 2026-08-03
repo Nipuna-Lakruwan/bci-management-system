@@ -70,7 +70,7 @@ class _EnrolmentScreenState extends State<EnrolmentScreen> {
                 padding: const EdgeInsets.all(16.0),
                 color: Colors.white,
                 child: DropdownButtonFormField<Student>(
-                  value: _selectedStudent,
+                  initialValue: _selectedStudent,
                   decoration: const InputDecoration(
                     labelText: 'Select Student',
                     border: OutlineInputBorder(),

@@ -152,7 +152,7 @@ class _EmployeeFormScreenState extends State<EmployeeFormScreen> {
               const Text('Job Details', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
               const SizedBox(height: 16),
               DropdownButtonFormField<String>(
-                value: _department,
+                initialValue: _department,
                 decoration: const InputDecoration(labelText: 'Department'),
                 items: _departments.map((d) => DropdownMenuItem(value: d, child: Text(d))).toList(),
                 onChanged: (value) => setState(() => _department = value!),
