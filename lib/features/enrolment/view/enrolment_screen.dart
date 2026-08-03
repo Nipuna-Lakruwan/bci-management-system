@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../controller/enrolment_controller.dart';
-import '../../courses/controller/course_controller.dart';
 import '../../students/model/student.dart';
-import '../../students/controller/student_controller.dart';
 import '../../../core/widgets/app_button.dart';
 
 class EnrolmentScreen extends StatefulWidget {
@@ -55,14 +53,14 @@ class _EnrolmentScreenState extends State<EnrolmentScreen> {
       appBar: AppBar(
         title: const Text('Manage Enrolment'),
       ),
-      body: Consumer2<CourseController, StudentController>(
-        builder: (context, courseController, studentController, child) {
-          if (courseController.isLoading || studentController.isLoading) {
+      body: Consumer<EnrolmentController>(
+        builder: (context, enrolmentController, child) {
+          if (enrolmentController.isLoading) {
             return const Center(child: CircularProgressIndicator());
           }
 
-          final courses = courseController.courses;
-          final students = studentController.students;
+          final courses = enrolmentController.courses;
+          final students = enrolmentController.students;
 
           return Column(
             children: [
@@ -107,14 +105,10 @@ class _EnrolmentScreenState extends State<EnrolmentScreen> {
                 ),
                 Padding(
                   padding: const EdgeInsets.all(16.0),
-                  child: Consumer<EnrolmentController>(
-                    builder: (context, enrolmentController, child) {
-                      return AppButton(
-                        label: 'Save Changes',
-                        onPressed: _saveEnrolment,
-                        isLoading: enrolmentController.isLoading,
-                      );
-                    },
+                  child: AppButton(
+                    label: 'Save Changes',
+                    onPressed: _saveEnrolment,
+                    isLoading: enrolmentController.isLoading,
                   ),
                 ),
               ] else ...[

@@ -27,7 +27,11 @@ class App extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => AuthController()),
         ChangeNotifierProvider(create: (_) => StudentController(StudentService(LocalStudentRepository()))),
         ChangeNotifierProvider(create: (_) => CourseController(CourseService(LocalCourseRepository()))),
-        ChangeNotifierProvider(create: (_) => EnrolmentController(LocalEnrolmentRepository())),
+        ChangeNotifierProvider(create: (_) => EnrolmentController(
+          LocalEnrolmentRepository(),
+          LocalStudentRepository(),
+          LocalCourseRepository(),
+        )),
         ChangeNotifierProvider(create: (_) => EmployeeController(EmployeeRepositoryImpl(StorageService()))),
         ChangeNotifierProvider(create: (_) => HrController(HrRepositoryImpl(StorageService()))),
       ],

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../controller/enrolment_controller.dart';
-import '../../courses/controller/course_controller.dart';
 import '../../students/model/student.dart';
 import 'enrolment_screen.dart';
 
@@ -27,8 +26,8 @@ class StudentCoursesScreen extends StatelessWidget {
           ),
         ],
       ),
-      body: Consumer2<EnrolmentController, CourseController>(
-        builder: (context, enrolmentController, courseController, child) {
+      body: Consumer<EnrolmentController>(
+        builder: (context, enrolmentController, child) {
           final enrolledCourseIds = enrolmentController.getEnrolledCourseIds(student.id);
           
           if (enrolledCourseIds.isEmpty) {
@@ -54,7 +53,7 @@ class StudentCoursesScreen extends StatelessWidget {
             );
           }
 
-          final enrolledCourses = courseController.courses
+          final enrolledCourses = enrolmentController.courses
               .where((c) => enrolledCourseIds.contains(c.id))
               .toList();
 

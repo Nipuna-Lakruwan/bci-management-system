@@ -1,24 +1,41 @@
 import 'package:flutter/material.dart';
 import '../model/enrolment.dart';
 import '../repository/enrolment_repository.dart';
+import '../../students/repository/student_repository.dart';
+import '../../students/model/student.dart';
+import '../../courses/repository/course_repository.dart';
+import '../../courses/model/course.dart';
 
 class EnrolmentController extends ChangeNotifier {
   final EnrolmentRepository _repository;
+  final StudentReader _studentReader;
+  final CourseReader _courseReader;
   
-  EnrolmentController(this._repository) {
-    loadEnrolments();
+  EnrolmentController(this._repository, this._studentReader, this._courseReader) {
+    loadData();
   }
 
   List<Enrolment> _enrolments = [];
+  List<Student> _students = [];
+  List<Course> _courses = [];
   bool _isLoading = false;
 
   List<Enrolment> get enrolments => _enrolments;
+  List<Student> get students => _students;
+  List<Course> get courses => _courses;
   bool get isLoading => _isLoading;
 
-  Future<void> loadEnrolments() async {
+  Future<void> loadData() async {
     _setLoading(true);
     _enrolments = await _repository.getAllEnrolments();
+    _students = await _studentReader.getStudents();
+    _courses = await _courseReader.getCourses();
     _setLoading(false);
+  }
+  
+  Future<void> loadEnrolments() async {
+    _enrolments = await _repository.getAllEnrolments();
+    notifyListeners();
   }
 
   Enrolment? getEnrolmentForStudent(String studentId) {
