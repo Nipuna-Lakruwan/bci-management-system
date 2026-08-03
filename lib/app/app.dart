@@ -22,18 +22,24 @@ class App extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Dependency Injection (DIP) setup
+    final storageService = StorageService();
+    final studentRepo = LocalStudentRepository();
+    final courseRepo = LocalCourseRepository();
+    final enrolmentRepo = LocalEnrolmentRepository();
+
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => AuthController()),
-        ChangeNotifierProvider(create: (_) => StudentController(StudentService(LocalStudentRepository()))),
-        ChangeNotifierProvider(create: (_) => CourseController(CourseService(LocalCourseRepository()))),
+        ChangeNotifierProvider(create: (_) => StudentController(StudentService(studentRepo))),
+        ChangeNotifierProvider(create: (_) => CourseController(CourseService(courseRepo))),
         ChangeNotifierProvider(create: (_) => EnrolmentController(
-          LocalEnrolmentRepository(),
-          LocalStudentRepository(),
-          LocalCourseRepository(),
+          enrolmentRepo,
+          studentRepo,
+          courseRepo,
         )),
-        ChangeNotifierProvider(create: (_) => EmployeeController(EmployeeRepositoryImpl(StorageService()))),
-        ChangeNotifierProvider(create: (_) => HrController(HrRepositoryImpl(StorageService()))),
+        ChangeNotifierProvider(create: (_) => EmployeeController(EmployeeRepositoryImpl(storageService))),
+        ChangeNotifierProvider(create: (_) => HrController(HrRepositoryImpl(storageService))),
       ],
       child: MaterialApp(
         title: 'BCI Management System',
