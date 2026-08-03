@@ -92,7 +92,7 @@ class DashboardScreen extends StatelessWidget {
                         controller.enrolments.length.toString(),
                         Icons.how_to_reg_rounded,
                         const [Color(0xFF10B981), Color(0xFF059669)],
-                        null,
+                        AppRouter.enrolmentRoute,
                       ),
                     ),
                     if (role == 'Admin' || role == 'HR') ...[
@@ -151,6 +151,7 @@ class DashboardScreen extends StatelessWidget {
             _buildDrawerItem(context, Icons.dashboard_rounded, 'Dashboard', null),
             _buildDrawerItem(context, Icons.people_alt_rounded, 'Students', AppRouter.studentListRoute),
             _buildDrawerItem(context, Icons.menu_book_rounded, 'Courses', AppRouter.courseListRoute),
+            _buildDrawerItem(context, Icons.how_to_reg_rounded, 'Enrolments', AppRouter.enrolmentRoute),
             if (role == 'Admin' || role == 'HR') ...[
               const Padding(
                 padding: EdgeInsets.symmetric(horizontal: 24, vertical: 16),
