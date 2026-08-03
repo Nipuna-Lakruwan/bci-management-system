@@ -3,12 +3,11 @@ import 'package:provider/provider.dart';
 import '../controller/enrolment_controller.dart';
 import '../../courses/controller/course_controller.dart';
 import '../../students/model/student.dart';
+import '../../students/controller/student_controller.dart';
 import '../../../core/widgets/app_button.dart';
 
 class EnrolmentScreen extends StatefulWidget {
-  final Student student;
-
-  const EnrolmentScreen({super.key, required this.student});
+  const EnrolmentScreen({super.key});
 
   @override
   State<EnrolmentScreen> createState() => _EnrolmentScreenState();
@@ -16,16 +15,16 @@ class EnrolmentScreen extends StatefulWidget {
 
 class _EnrolmentScreenState extends State<EnrolmentScreen> {
   final List<String> _selectedCourseIds = [];
-  bool _isInit = true;
+  Student? _selectedStudent;
 
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    if (_isInit) {
+  void _onStudentChanged(Student? student) {
+    if (student == null) return;
+    setState(() {
+      _selectedStudent = student;
+      _selectedCourseIds.clear();
       final enrolmentController = context.read<EnrolmentController>();
-      _selectedCourseIds.addAll(enrolmentController.getEnrolledCourseIds(widget.student.id));
-      _isInit = false;
-    }
+      _selectedCourseIds.addAll(enrolmentController.getEnrolledCourseIds(student.id));
+    });
   }
 
   void _toggleCourse(String courseId, bool? isSelected) {
@@ -39,8 +38,9 @@ class _EnrolmentScreenState extends State<EnrolmentScreen> {
   }
 
   void _saveEnrolment() async {
+    if (_selectedStudent == null) return;
     final controller = context.read<EnrolmentController>();
-    await controller.updateEnrolment(widget.student.id, _selectedCourseIds);
+    await controller.updateEnrolment(_selectedStudent!.id, _selectedCourseIds);
     if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Enrolment saved successfully')),
@@ -55,71 +55,75 @@ class _EnrolmentScreenState extends State<EnrolmentScreen> {
       appBar: AppBar(
         title: const Text('Manage Enrolment'),
       ),
-      body: Consumer<CourseController>(
-        builder: (context, courseController, child) {
-          if (courseController.isLoading) {
+      body: Consumer2<CourseController, StudentController>(
+        builder: (context, courseController, studentController, child) {
+          if (courseController.isLoading || studentController.isLoading) {
             return const Center(child: CircularProgressIndicator());
           }
 
           final courses = courseController.courses;
+          final students = studentController.students;
 
           return Column(
             children: [
               Container(
                 padding: const EdgeInsets.all(16.0),
                 color: Colors.white,
-                child: Row(
-                  children: [
-                    const CircleAvatar(
-                      backgroundColor: Color(0xFF1E3A8A),
-                      child: Icon(Icons.person, color: Colors.white),
-                    ),
-                    const SizedBox(width: 16),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(widget.student.name, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                          Text(widget.student.id, style: TextStyle(color: Colors.grey.shade600)),
-                        ],
-                      ),
-                    ),
-                  ],
+                child: DropdownButtonFormField<Student>(
+                  value: _selectedStudent,
+                  decoration: const InputDecoration(
+                    labelText: 'Select Student',
+                    border: OutlineInputBorder(),
+                    prefixIcon: Icon(Icons.person),
+                  ),
+                  items: students.map((s) => DropdownMenuItem(
+                    value: s,
+                    child: Text('${s.name} (${s.id})'),
+                  )).toList(),
+                  onChanged: _onStudentChanged,
                 ),
               ),
               const Divider(height: 1),
-              Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Text('Select Courses', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.grey.shade700)),
-              ),
-              Expanded(
-                child: ListView.builder(
-                  itemCount: courses.length,
-                  itemBuilder: (context, index) {
-                    final course = courses[index];
-                    final isSelected = _selectedCourseIds.contains(course.id);
-                    return CheckboxListTile(
-                      value: isSelected,
-                      onChanged: (val) => _toggleCourse(course.id, val),
-                      title: Text(course.name, style: const TextStyle(fontWeight: FontWeight.bold)),
-                      subtitle: Text('${course.id} • ${course.credits} Credits'),
-                      secondary: const Icon(Icons.book, color: Color(0xFF1E3A8A)),
-                    );
-                  },
+              if (_selectedStudent != null) ...[
+                Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Text('Select Courses for ${_selectedStudent!.name}', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.grey.shade700)),
                 ),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Consumer<EnrolmentController>(
-                  builder: (context, enrolmentController, child) {
-                    return AppButton(
-                      label: 'Save Changes',
-                      onPressed: _saveEnrolment,
-                      isLoading: enrolmentController.isLoading,
-                    );
-                  },
+                Expanded(
+                  child: ListView.builder(
+                    itemCount: courses.length,
+                    itemBuilder: (context, index) {
+                      final course = courses[index];
+                      final isSelected = _selectedCourseIds.contains(course.id);
+                      return CheckboxListTile(
+                        value: isSelected,
+                        onChanged: (val) => _toggleCourse(course.id, val),
+                        title: Text(course.name, style: const TextStyle(fontWeight: FontWeight.bold)),
+                        subtitle: Text('${course.id} • ${course.credits} Credits'),
+                        secondary: const Icon(Icons.book, color: Color(0xFF1E3A8A)),
+                      );
+                    },
+                  ),
                 ),
-              ),
+                Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Consumer<EnrolmentController>(
+                    builder: (context, enrolmentController, child) {
+                      return AppButton(
+                        label: 'Save Changes',
+                        onPressed: _saveEnrolment,
+                        isLoading: enrolmentController.isLoading,
+                      );
+                    },
+                  ),
+                ),
+              ] else ...[
+                const Expanded(
+                  child: Center(
+                    child: Text('Please select a student to manage enrolments.', style: TextStyle(fontSize: 16, color: Colors.grey)),
+                  ),
+                ),
+              ]
             ],
           );
         },

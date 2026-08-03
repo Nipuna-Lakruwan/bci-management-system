@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
-import '../../models/employee.dart';
-import '../../core/storage/storage_service.dart';
+import 'package:provider/provider.dart';
+import 'package:printing/printing.dart';
+import '../../core/utils/pdf_generator.dart';
+import '../../features/employees/domain/employee.dart';
+import '../../features/employees/controller/employee_controller.dart';
 
 class PayrollScreen extends StatefulWidget {
   const PayrollScreen({super.key});
@@ -11,9 +14,9 @@ class PayrollScreen extends StatefulWidget {
 
 class _PayrollScreenState extends State<PayrollScreen> {
   
-  double get monthlyPayrollTotal {
+  double _getMonthlyPayrollTotal(List<Employee> employees) {
     double total = 0;
-    for (final emp in mockEmployees) {
+    for (final emp in employees) {
       total += emp.netSalary;
     }
     return total;
@@ -38,11 +41,8 @@ class _PayrollScreenState extends State<PayrollScreen> {
       ),
     );
 
-    if (confirmed == true) {
-      setState(() {
-        mockEmployees.removeWhere((e) => e.id == employee.id);
-      });
-      StorageService.saveEmployees();
+    if (confirmed == true && context.mounted) {
+      context.read<EmployeeController>().deleteEmployee(employee.id);
     }
   }
 
@@ -70,10 +70,12 @@ class _PayrollScreenState extends State<PayrollScreen> {
             child: const Text('Close'),
           ),
           FilledButton.icon(
-            onPressed: () {
+            onPressed: () async {
               Navigator.pop(context);
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Payslip generated successfully!')),
+              final pdfBytes = await PdfGenerator.generatePayslip(employee);
+              await Printing.layoutPdf(
+                onLayout: (format) async => pdfBytes,
+                name: 'Payslip_${employee.id}.pdf',
               );
             },
             icon: const Icon(Icons.print),
@@ -88,6 +90,8 @@ class _PayrollScreenState extends State<PayrollScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final employees = context.watch<EmployeeController>().employees;
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Payroll Management'),
@@ -113,7 +117,7 @@ class _PayrollScreenState extends State<PayrollScreen> {
                       children: <Widget>[
                         const Text('Total Net Payroll'),
                         Text(
-                          _money(monthlyPayrollTotal),
+                          _money(_getMonthlyPayrollTotal(employees)),
                           style: Theme.of(context)
                               .textTheme
                               .headlineSmall
@@ -127,7 +131,7 @@ class _PayrollScreenState extends State<PayrollScreen> {
             ),
           ),
           const SizedBox(height: 14),
-          ...mockEmployees.map(
+          ...employees.map(
             (Employee employee) => Padding(
               padding: const EdgeInsets.only(bottom: 10),
               child: Card(

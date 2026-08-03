@@ -5,7 +5,7 @@ import '../screens/dashboard/dashboard_screen.dart';
 import '../features/auth/view/login_screen.dart';
 import '../features/students/view/student_list_screen.dart';
 import '../features/courses/view/course_list_screen.dart';
-// import '../features/courses/view/course_list_screen.dart';
+import '../features/enrolment/view/enrolment_screen.dart';
 
 class AppRouter {
   static const String loginRoute = '/login';
@@ -24,6 +24,8 @@ class AppRouter {
         return MaterialPageRoute(builder: (_) => const StudentListScreen());
       case courseListRoute:
         return MaterialPageRoute(builder: (_) => const CourseListScreen());
+      case enrolmentRoute:
+        return MaterialPageRoute(builder: (_) => const EnrolmentScreen());
       default:
         return MaterialPageRoute(
           builder: (_) => Scaffold(

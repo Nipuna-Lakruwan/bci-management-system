@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'app/app.dart';
-import 'core/storage/storage_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await StorageService.loadData();
+  // (Storage service initialization is now handled by repositories)
   runApp(const App());
 }
 

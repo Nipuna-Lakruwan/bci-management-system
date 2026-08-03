@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import '../../models/employee.dart';
-import '../../core/storage/storage_service.dart';
+import 'package:provider/provider.dart';
+import '../domain/employee.dart';
+import '../controller/employee_controller.dart';
 
 class EmployeeFormScreen extends StatefulWidget {
   final Employee? employee;
@@ -13,13 +14,13 @@ class EmployeeFormScreen extends StatefulWidget {
 
 class _EmployeeFormScreenState extends State<EmployeeFormScreen> {
   final _formKey = GlobalKey<FormState>();
-  
+
   late TextEditingController _idController;
   late TextEditingController _nameController;
   late TextEditingController _designationController;
   late TextEditingController _basicSalaryController;
   late TextEditingController _allowancesController;
-  
+
   String _department = 'School of Computing';
   final List<String> _departments = [
     'School of Computing',
@@ -37,7 +38,7 @@ class _EmployeeFormScreenState extends State<EmployeeFormScreen> {
     _designationController = TextEditingController(text: widget.employee?.designation ?? '');
     _basicSalaryController = TextEditingController(text: widget.employee?.basicSalary.toString() ?? '0');
     _allowancesController = TextEditingController(text: widget.employee?.allowances.toString() ?? '0');
-    
+
     if (widget.employee != null && _departments.contains(widget.employee!.department)) {
       _department = widget.employee!.department;
     }
@@ -53,9 +54,9 @@ class _EmployeeFormScreenState extends State<EmployeeFormScreen> {
     super.dispose();
   }
 
-  void _saveEmployee() {
+  Future<void> _saveEmployee() async {
     if (_formKey.currentState!.validate()) {
-      final newEmployee = Employee(
+      final employee = Employee(
         id: _idController.text,
         name: _nameController.text,
         email: 'staff@bci.lk',
@@ -63,29 +64,68 @@ class _EmployeeFormScreenState extends State<EmployeeFormScreen> {
         designation: _designationController.text,
         basicSalary: double.parse(_basicSalaryController.text),
         allowances: double.parse(_allowancesController.text),
-        overtime: 0,
-        deductions: 0,
-        tax: 0,
+        overtime: widget.employee?.overtime ?? 0,
+        deductions: widget.employee?.deductions ?? 0,
+        tax: widget.employee?.tax ?? 0,
       );
 
+      final controller = context.read<EmployeeController>();
+      bool success;
       if (widget.employee == null) {
-        mockEmployees.add(newEmployee);
+        success = await controller.addEmployee(employee);
       } else {
-        final index = mockEmployees.indexWhere((e) => e.id == widget.employee!.id);
-        if (index != -1) {
-          mockEmployees[index] = newEmployee;
-        }
+        success = await controller.updateEmployee(employee);
       }
-      StorageService.saveEmployees();
-      Navigator.pop(context, true);
+
+      if (success && mounted) {
+        Navigator.pop(context);
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Employee saved successfully!')),
+        );
+      }
+    }
+  }
+
+  Future<void> _deleteEmployee() async {
+    final confirm = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Delete Employee'),
+        content: const Text('Are you sure you want to delete this employee?'),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(context, false), child: const Text('Cancel')),
+          TextButton(
+            onPressed: () => Navigator.pop(context, true),
+            child: const Text('Delete', style: TextStyle(color: Colors.red)),
+          ),
+        ],
+      ),
+    );
+
+    if (confirm == true && mounted) {
+      final success = await context.read<EmployeeController>().deleteEmployee(widget.employee!.id);
+      if (success && mounted) {
+        Navigator.pop(context);
+      }
     }
   }
 
   @override
   Widget build(BuildContext context) {
     final isEditing = widget.employee != null;
+    final isLoading = context.watch<EmployeeController>().isLoading;
+
     return Scaffold(
-      appBar: AppBar(title: Text(isEditing ? 'Edit Employee' : 'Add Employee')),
+      appBar: AppBar(
+        title: Text(isEditing ? 'Edit Employee' : 'Add Employee'),
+        actions: [
+          if (isEditing)
+            IconButton(
+              icon: const Icon(Icons.delete),
+              onPressed: isLoading ? null : _deleteEmployee,
+            ),
+        ],
+      ),
       body: Form(
         key: _formKey,
         child: SingleChildScrollView(
@@ -97,30 +137,30 @@ class _EmployeeFormScreenState extends State<EmployeeFormScreen> {
               const SizedBox(height: 16),
               TextFormField(
                 controller: _idController,
-                decoration: const InputDecoration(labelText: 'Employee ID', border: OutlineInputBorder()),
+                decoration: const InputDecoration(labelText: 'Employee ID'),
                 validator: (value) => value == null || value.isEmpty ? 'Required' : null,
                 enabled: !isEditing,
               ),
               const SizedBox(height: 16),
               TextFormField(
                 controller: _nameController,
-                decoration: const InputDecoration(labelText: 'Full Name', border: OutlineInputBorder()),
+                decoration: const InputDecoration(labelText: 'Full Name'),
                 validator: (value) => value == null || value.isEmpty ? 'Required' : null,
               ),
               const SizedBox(height: 32),
-              
+
               const Text('Job Details', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
               const SizedBox(height: 16),
               DropdownButtonFormField<String>(
-                initialValue: _department,
-                decoration: const InputDecoration(labelText: 'Department', border: OutlineInputBorder()),
+                value: _department,
+                decoration: const InputDecoration(labelText: 'Department'),
                 items: _departments.map((d) => DropdownMenuItem(value: d, child: Text(d))).toList(),
                 onChanged: (value) => setState(() => _department = value!),
               ),
               const SizedBox(height: 16),
               TextFormField(
                 controller: _designationController,
-                decoration: const InputDecoration(labelText: 'Designation', border: OutlineInputBorder()),
+                decoration: const InputDecoration(labelText: 'Designation'),
                 validator: (value) => value == null || value.isEmpty ? 'Required' : null,
               ),
               const SizedBox(height: 32),
@@ -132,7 +172,7 @@ class _EmployeeFormScreenState extends State<EmployeeFormScreen> {
                   Expanded(
                     child: TextFormField(
                       controller: _basicSalaryController,
-                      decoration: const InputDecoration(labelText: 'Basic Salary (Rs)', border: OutlineInputBorder()),
+                      decoration: const InputDecoration(labelText: 'Basic Salary (Rs)'),
                       keyboardType: TextInputType.number,
                       validator: (value) => value == null || double.tryParse(value) == null ? 'Invalid number' : null,
                     ),
@@ -141,7 +181,7 @@ class _EmployeeFormScreenState extends State<EmployeeFormScreen> {
                   Expanded(
                     child: TextFormField(
                       controller: _allowancesController,
-                      decoration: const InputDecoration(labelText: 'Allowances (Rs)', border: OutlineInputBorder()),
+                      decoration: const InputDecoration(labelText: 'Allowances (Rs)'),
                       keyboardType: TextInputType.number,
                       validator: (value) => value == null || double.tryParse(value) == null ? 'Invalid number' : null,
                     ),
@@ -151,10 +191,11 @@ class _EmployeeFormScreenState extends State<EmployeeFormScreen> {
               const SizedBox(height: 32),
               SizedBox(
                 width: double.infinity,
-                height: 50,
                 child: ElevatedButton(
-                  onPressed: _saveEmployee,
-                  child: const Text('Save Employee'),
+                  onPressed: isLoading ? null : _saveEmployee,
+                  child: isLoading
+                      ? const CircularProgressIndicator(color: Colors.white)
+                      : const Text('Save Employee'),
                 ),
               ),
             ],

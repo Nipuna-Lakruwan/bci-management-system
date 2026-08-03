@@ -21,7 +21,7 @@ class StudentCoursesScreen extends StatelessWidget {
             onPressed: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => EnrolmentScreen(student: student)),
+                MaterialPageRoute(builder: (context) => const EnrolmentScreen()),
               );
             },
           ),
@@ -44,7 +44,7 @@ class StudentCoursesScreen extends StatelessWidget {
                     onPressed: () {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) => EnrolmentScreen(student: student)),
+                        MaterialPageRoute(builder: (context) => const EnrolmentScreen()),
                       );
                     },
                     child: const Text('Enrol Now'),
@@ -113,7 +113,7 @@ class StudentCoursesScreen extends StatelessWidget {
         onPressed: () {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => EnrolmentScreen(student: student)),
+            MaterialPageRoute(builder: (context) => const EnrolmentScreen()),
           );
         },
         child: const Icon(Icons.edit),

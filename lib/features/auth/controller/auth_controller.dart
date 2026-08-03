@@ -20,7 +20,7 @@ class AuthController extends ChangeNotifier {
     await Future.delayed(const Duration(seconds: 1));
 
     // Hardcoded auth for MVP based on existing logic
-    if (email == 'admin' && password == 'admin') {
+    if (email == 'admin' && password == 'admin123') {
       _currentUser = const UserSession(id: 'U1', name: 'Admin User', email: 'admin@bci.lk', role: 'Admin');
     } else if (email == 'hr' && password == 'hr') {
       _currentUser = const UserSession(id: 'U2', name: 'HR Manager', email: 'hr@bci.lk', role: 'HR');
