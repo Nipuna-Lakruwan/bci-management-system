@@ -57,13 +57,19 @@ class LocalStudentRepository implements StudentRepository {
     if (index != -1) {
       students[index] = student;
       await _saveAll(students);
+    } else {
+      throw Exception('Student with id ${student.id} not found.');
     }
   }
 
   @override
   Future<void> deleteStudent(String id) async {
     final students = await getStudents();
+    final initialLength = students.length;
     students.removeWhere((s) => s.id == id);
+    if (students.length == initialLength) {
+      throw Exception('Student with id $id not found.');
+    }
     await _saveAll(students);
   }
 }

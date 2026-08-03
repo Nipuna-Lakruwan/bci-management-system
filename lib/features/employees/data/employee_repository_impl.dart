@@ -44,13 +44,19 @@ class EmployeeRepositoryImpl implements EmployeeRepository {
     if (index != -1) {
       employees[index] = employee;
       await _saveEmployees(employees);
+    } else {
+      throw Exception('Employee with id ${employee.id} not found.');
     }
   }
 
   @override
   Future<void> deleteEmployee(String id) async {
     final employees = await getEmployees();
+    final initialLength = employees.length;
     employees.removeWhere((e) => e.id == id);
+    if (employees.length == initialLength) {
+      throw Exception('Employee with id $id not found.');
+    }
     await _saveEmployees(employees);
   }
 

@@ -98,13 +98,19 @@ class LocalCourseRepository implements CourseRepository {
     if (index != -1) {
       courses[index] = course;
       await _saveAll(courses);
+    } else {
+      throw Exception('Course with id ${course.id} not found.');
     }
   }
 
   @override
   Future<void> deleteCourse(String id) async {
     final courses = await getCourses();
+    final initialLength = courses.length;
     courses.removeWhere((c) => c.id == id);
+    if (courses.length == initialLength) {
+      throw Exception('Course with id $id not found.');
+    }
     await _saveAll(courses);
   }
 }
